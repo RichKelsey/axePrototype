@@ -18,13 +18,24 @@ public class playerController : MonoBehaviour
     Transform cam;
     [SerializeField]
     Rigidbody axe;
+    [SerializeField]
+    GameObject rHand;
+    [SerializeField]
+    float axeReturnTime;
 
     float turnSmoothVelocity;
+    Vector3 axeLerpStartPos;
+    float elapsedTime;
+    Quaternion axeHoldRot;
+    Vector3 axeHoldPos;
+    bool returning;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        axeHoldPos = axe.transform.localPosition;
+        axeHoldRot = axe.transform.localRotation;
     }
 
     // Update is called once per frame
@@ -56,9 +67,41 @@ public class playerController : MonoBehaviour
             anim.SetBool("isMoving", false);
         }
 
-        if (Input.GetKey(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.JoystickButton11))
+        if ((Input.GetKey(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.JoystickButton11)) && axe.transform.parent)
         {
             throwBegin();
+        }
+
+        if (Input.GetKeyDown(KeyCode.R) && !axe.transform.parent)
+        {
+            axe.detectCollisions = false;
+            axe.isKinematic = false;
+            axe.useGravity = false;
+            axeLerpStartPos = axe.transform.position;
+            returning = true;
+            
+            
+
+        }
+
+        if (returning && (Vector3.Dot(axe.transform.position, rHand.transform.position) > .9999f))
+        {
+            returning = false;
+            axe.isKinematic = true;
+            axe.useGravity = true;
+            axe.detectCollisions = true;
+            axe.transform.SetParent(rHand.transform);
+            axe.transform.localPosition = axeHoldPos;
+            axe.transform.localRotation = axeHoldRot;
+            elapsedTime = 0;
+            
+        }
+
+        if (returning)
+        {
+            elapsedTime += Time.deltaTime;
+
+            axe.transform.position = Vector3.Lerp(axeLerpStartPos, rHand.transform.position, (elapsedTime / axeReturnTime));
         }
     }
 
@@ -77,8 +120,7 @@ public class playerController : MonoBehaviour
     }
 
     private void throwAxe()
-    {
-        
+    {       
 
         axe.isKinematic = false;
         axe.transform.parent = null;
