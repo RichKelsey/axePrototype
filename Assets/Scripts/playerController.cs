@@ -29,6 +29,8 @@ public class playerController : MonoBehaviour
     Quaternion axeHoldRot;
     Vector3 axeHoldPos;
     bool returning;
+    BoxCollider handColl;
+    handHandler handHandler;
 
 
     // Start is called before the first frame update
@@ -36,6 +38,7 @@ public class playerController : MonoBehaviour
     {
         axeHoldPos = axe.transform.localPosition;
         axeHoldRot = axe.transform.localRotation;
+        handHandler = rHand.GetComponent<handHandler>();
     }
 
     // Update is called once per frame
@@ -74,17 +77,15 @@ public class playerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R) && !axe.transform.parent)
         {
-            axe.detectCollisions = false;
+            axe.detectCollisions = true;
             axe.isKinematic = false;
             axe.useGravity = false;
             axeLerpStartPos = axe.transform.position;
             returning = true;
-            
-            
-
+            rHand.GetComponent<BoxCollider>().enabled = true;
         }
 
-        if (returning && (Vector3.Dot(axe.transform.position, rHand.transform.position) > .9999f))
+        if (returning && handHandler.axeInRange)
         {
             returning = false;
             axe.isKinematic = true;
@@ -94,13 +95,12 @@ public class playerController : MonoBehaviour
             axe.transform.localPosition = axeHoldPos;
             axe.transform.localRotation = axeHoldRot;
             elapsedTime = 0;
-            
+            rHand.GetComponent<BoxCollider>().enabled = false;
         }
 
         if (returning)
         {
             elapsedTime += Time.deltaTime;
-
             axe.transform.position = Vector3.Lerp(axeLerpStartPos, rHand.transform.position, (elapsedTime / axeReturnTime));
         }
     }
@@ -115,6 +115,7 @@ public class playerController : MonoBehaviour
     {
         if (!anim.GetCurrentAnimatorStateInfo(1).IsTag("attacking"))
         {
+            rHand.GetComponent<BoxCollider>().enabled = false;
             anim.SetTrigger("attacking");
         }
     }
@@ -130,4 +131,5 @@ public class playerController : MonoBehaviour
         anim.ResetTrigger("attacking");
 
     }
+
 }
