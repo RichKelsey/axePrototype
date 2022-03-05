@@ -7,6 +7,7 @@ public class playerController : MonoBehaviour
 
     public CharacterController controller;
     public Animator anim;
+    public cameraHandler camHandler;
 
     [SerializeField]
     float speed;
@@ -70,10 +71,6 @@ public class playerController : MonoBehaviour
             anim.SetBool("isMoving", false);
         }
 
-        if ((Input.GetKey(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.JoystickButton11)) && axe.transform.parent)
-        {
-            throwBegin();
-        }
 
         if (Input.GetKeyDown(KeyCode.R) && !axe.transform.parent)
         {
@@ -87,22 +84,50 @@ public class playerController : MonoBehaviour
 
         if (returning && handHandler.axeInRange)
         {
-            returning = false;
+            rHand.GetComponent<BoxCollider>().enabled = false;
+            axe.transform.SetParent(rHand.transform);
+            
             axe.isKinematic = true;
             axe.useGravity = true;
             axe.detectCollisions = true;
-            axe.transform.SetParent(rHand.transform);
             axe.transform.localPosition = axeHoldPos;
             axe.transform.localRotation = axeHoldRot;
+            
             elapsedTime = 0;
-            rHand.GetComponent<BoxCollider>().enabled = false;
+            
+            handHandler.axeInRange = false;
+            returning = false;
+            
         }
 
+        
+
+        camHandler.aiming = Input.GetMouseButton(1) ? true : false;
+        
+        if(camHandler.aiming)
+        {
+
+            transform.rotation = camHandler.transform.rotation;
+        }
+
+    }
+
+    private void FixedUpdate()
+    {
         if (returning)
         {
+            //print("reached");
             elapsedTime += Time.deltaTime;
-            axe.transform.position = Vector3.Lerp(axeLerpStartPos, rHand.transform.position, (elapsedTime / axeReturnTime));
+            axe.transform.position = Vector3.Lerp(axeLerpStartPos, rHand.transform.position, elapsedTime / axeReturnTime);
+            
         }
+
+        if ((Input.GetKey(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.JoystickButton11)) && axe.transform.parent)
+        {
+            throwBegin();
+        }
+
+        //print(returning);
     }
 
     private void OnAnimatorMove()
@@ -125,7 +150,7 @@ public class playerController : MonoBehaviour
 
         axe.isKinematic = false;
         axe.transform.parent = null;
-        axe.AddForce(transform.forward * throwStrength);
+        axe.AddForce(transform.forward * throwStrength, ForceMode.Impulse);
         axe.transform.rotation = Quaternion.Euler(0, 90 + transform.eulerAngles.y, 0);
 
         anim.ResetTrigger("attacking");

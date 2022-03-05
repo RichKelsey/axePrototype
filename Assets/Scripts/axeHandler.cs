@@ -6,7 +6,6 @@ public class axeHandler : MonoBehaviour
 {
 
     Rigidbody rb;
-    Ray directionCheck;
 
     // Start is called before the first frame update
     void Start()
@@ -24,11 +23,15 @@ public class axeHandler : MonoBehaviour
     {
         print(collision.gameObject.name);
         rb.isKinematic = true;
-        print(transform.parent);
 
         //transform.LookAt(collision.gameObject.transform.position, transform.up);
         //print(transform.forward);
         //gameObject.transform.rotation = Quaternion.Euler(gameObject.transform.rotation.x, gameObject.transform.rotation.y, gameObject.transform.rotation.z);
 
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        print(collision.gameObject.name);
     }
 }
