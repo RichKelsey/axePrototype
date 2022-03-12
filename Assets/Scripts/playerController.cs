@@ -7,7 +7,6 @@ public class playerController : MonoBehaviour
 
     public CharacterController controller;
     public Animator anim;
-    public cameraHandler camHandler;
 
     [SerializeField]
     float speed;
@@ -37,6 +36,7 @@ public class playerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         axeHoldPos = axe.transform.localPosition;
         axeHoldRot = axe.transform.localRotation;
         handHandler = rHand.GetComponent<handHandler>();
@@ -102,13 +102,13 @@ public class playerController : MonoBehaviour
 
         
 
-        camHandler.aiming = Input.GetMouseButton(1) ? true : false;
+        //camHandler.aiming = Input.GetMouseButton(1) ? true : false;
         
-        if(camHandler.aiming)
-        {
+        //if(camHandler.aiming)
+        //{
 
-            transform.rotation = camHandler.transform.rotation;
-        }
+        //    transform.rotation = camHandler.transform.rotation;
+        //}
 
     }
 
@@ -119,7 +119,8 @@ public class playerController : MonoBehaviour
             //print("reached");
             elapsedTime += Time.deltaTime;
             axe.transform.position = Vector3.Lerp(axeLerpStartPos, rHand.transform.position, elapsedTime / axeReturnTime);
-            
+            axe.transform.localEulerAngles -= Vector3.forward * axe.velocity.z;
+
         }
 
         if ((Input.GetKey(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.JoystickButton11)) && axe.transform.parent)

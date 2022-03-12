@@ -21,13 +21,13 @@ public class cameraHandler : MonoBehaviour
 
         if (aiming)
         {
-            aimCam.Priority = 1;
+            //aimCam.Priority = 1;
             standardCam.Priority = 0;
 
         }
         else
         {
-            aimCam.Priority = 0;
+            //aimCam.Priority = 0;
             standardCam.Priority = 1;
         }
 
