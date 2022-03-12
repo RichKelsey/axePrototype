@@ -119,7 +119,6 @@ public class playerController : MonoBehaviour
             //print("reached");
             elapsedTime += Time.deltaTime;
             axe.transform.position = Vector3.Lerp(axeLerpStartPos, rHand.transform.position, elapsedTime / axeReturnTime);
-            axe.transform.localEulerAngles -= Vector3.forward * axe.velocity.z;
 
         }
 
