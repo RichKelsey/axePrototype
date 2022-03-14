@@ -6,5 +6,5 @@ Axe asset created by me. All other player models and animations are from <a href
 
 This version includes throwing and recalling the axe, with it being able to stick into a surface waiting to be recalled.
 
-# TODO:
+## TODO:
 Features that I would like to add include: An aiming mode, a wobble to simulate weight when recalling from a stuck surface and AI to attack with the throw.
