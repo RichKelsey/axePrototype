@@ -18,6 +18,7 @@ public class handHandler : MonoBehaviour
         
     }
 
+    //check for axe colliding upon return of axe
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.collider.name == "axe")
